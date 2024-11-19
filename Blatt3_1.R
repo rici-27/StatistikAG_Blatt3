@@ -1,4 +1,6 @@
-setwd("C:/Users/Anwender/Desktop/Statistik AG/Blatt3")
+#setwd("C:/Users/Anwender/Desktop/Statistik AG/Blatt3")
+
+print("test")
 
 library(tidyverse)
 library(glmnet)
