@@ -1,4 +1,5 @@
-setwd("C:/Users/Anwender/Desktop/Statistik AG/Blatt3")
+#setwd("C:/Users/Anwender/Desktop/Statistik AG/Blatt3")
+#setwd("~/Desktop/Statistik_AG/Blatt3")
 
 library(tidyverse)
 library(glmnet)
