@@ -1,4 +1,5 @@
-setwd("C:/Users/Anwender/Desktop/Statistik AG/Blatt3")
+#setwd("C:/Users/Anwender/Desktop/Statistik AG/Blatt3")
+#setwd("~/Desktop/Statistik_AG/Blatt3")
 
 library(tidyverse)
 library(glmnet)
@@ -61,7 +62,7 @@ get_average_beta <- function(M, lambda){
 }
 
 # Parameter auswählen
-M <- 1000
+M <- 10
 lambda_values <- c(0.1, 0.125, 0.15)
 
 # Leere 3D-Matrix initialisieren (3 x 3 x Anzahl lambda-Werte)
