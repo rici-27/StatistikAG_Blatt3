@@ -13,15 +13,13 @@ rre <- function(X, y, lambda = 1){
 } 
 
 # funktion um emad für festes l zurück zu bekommen
-get_emad <- function(M, lambda, p){
+get_emad <- function(M, lambda, X){
   emad_speicher <- array(0, dim = c(3, 100))
   M <- 100
   n <- 500
   lambda <- 0.1
   for (i in (1:M)){
-    # randomness
-    X <- matrix(rnorm(n*p, mean = 0, sd = 1), nrow = n, ncol = p)
-    X <- scale(X)
+    # randomness 
     eps <- rnorm(n, mean=0, sd=0.25)
     y = X %*% beta + eps
     
@@ -43,7 +41,7 @@ get_emad <- function(M, lambda, p){
 
 
 # maximale Dimension festlegen
-L <- 15 
+L <- 15
 
 
 emad_matrix <- array(0, dim = c(3,L+1))
@@ -53,15 +51,15 @@ for (l in (0:L)){
   q <- 10 * l
   beta <- c(0.15, -0.33, 0.25, -0.25, rep(0,5), -0.25, 0.12, -0.125, rep(0,8), rep(0,q))
   p <- 20 + q
-  emad_matrix[,(l+1)] <- get_emad(100, 0.1, p)
+  X <- matrix(rnorm(n*p, mean = 0, sd = 1), nrow = n, ncol = p)
+  X <- scale(X)
+  emad_matrix[,(l+1)] <- get_emad(100, 0.1, X)
   print(l)
 }
 
-View(emad_matrix)
-
 dimensions = 0:L
 
-plot <- ggplot() + 
+ggplot() + 
   geom_point(aes(x = dimensions, y = emad_matrix[1,], shape = "Ridge", color = "Ridge"), size = 2, show.legend = TRUE) + 
   geom_point(aes(x = dimensions, y = emad_matrix[2,], shape = "Lasso", color = "Lasso"), size = 2, show.legend = TRUE) +
   geom_point(aes(x = dimensions, y = emad_matrix[3,], shape = "LeastSquares", color = "LeastSquares"), size = 2, show.legend = TRUE) +
@@ -80,4 +78,4 @@ plot <- ggplot() +
   ) +
   theme_minimal()
   
-ggsave("15plot.png", plot = plot, width = 8, height = 6, dpi = 300)
+# ggsave("15plot.png", plot = plot, width = 8, height = 6, dpi = 300)

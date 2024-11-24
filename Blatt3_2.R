@@ -32,13 +32,9 @@ n <- 500
 p <- 20
 X <- matrix(rnorm(n*p, mean = 0, sd = 1), nrow = n, ncol = p)
 X <- scale(X)
-eps <- rnorm(n, mean=0, sd=0.25)
-y = X %*% beta + eps
 
 # get average beta Funktion
 get_average_beta <- function(M, lambda){
-  X <- matrix(rnorm(n*p, mean = 0, sd = 1), nrow = n, ncol = p)
-  X <- scale(X)
   eps <- rnorm(n, mean=0, sd=0.25)
   y = X %*% beta + eps
   
@@ -93,7 +89,6 @@ for (i in (0:3)){
   }
 }
 
-View(distances[,,1])
 
 ggplot() + 
   geom_point(aes(x = lambda_values, y = distances[1,1,], shape = "Ridge", color = "Ridge"), size = 4, show.legend = TRUE) +

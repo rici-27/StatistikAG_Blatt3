@@ -21,12 +21,12 @@ ls<-function(X, y){
   lseq <- function(w, X, y) {
     crossprod(y - X%*%w)
   }
-  result=optim(rep(0, ncol(X)), lseq, X=X, y=y, method)
+  result=optim(rep(0, ncol(X)), lseq, X=X, y=y)
   result$par
 }
 
 ## Teil b) glmnet Package
-?glmnet
+# ?glmnet
 
 
 ## Teil c) 
@@ -35,16 +35,11 @@ beta <- c(0.15, -0.33, 0.25)
 n <- 500
 p <- 3
 X <- matrix(rnorm(n*p, mean = 0, sd = 1), nrow = n, ncol = p)
-?scale
 X <- scale(X)
-eps <- rnorm(n, mean=0, sd=0.25)
-y = X %*% beta + eps
 
 # ich bau mir eine funktion die mir 3x3 matrix
 # mit durchschnitts beta für alle 3 varianten zurückliefert
 get_average_beta <- function(M, lambda){
-  X <- matrix(rnorm(n*p, mean = 0, sd = 1), nrow = n, ncol = p)
-  X <- scale(X)
   eps <- rnorm(n, mean=0, sd=0.25)
   y = X %*% beta + eps
   
@@ -78,7 +73,7 @@ lambda_werte <- function(k){
 
 # Parameter auswählen
 k <- 20
-M <- 10
+M <- 1000
 
 lambda_values <- lambda_werte(k)
 
@@ -86,9 +81,10 @@ lambda_values <- lambda_werte(k)
 result_matrix <- array(0, dim = c(3, 3, length(lambda_values)))
 
 # Schleife zum Füllen der 3D-Matrix
-for (i in seq_along(lambda_values)) {
+for (i in (1:k)) {
   lambda <- lambda_values[i]
   result_matrix[,,i] <- get_average_beta(M, lambda)
+  print(i)
 }
 
 
@@ -99,9 +95,6 @@ for (i in (1:k)){
   data_1[i,1] = 1/i
   data_1[i,2] = sqrt(sum((result_matrix[,1,i] - result_matrix[,3,i])^2))
 }
-View(data_1)
-
-
 
 ggplot() + 
   geom_point(aes(x = data_1$X1, y = data_1$X2), color = "blue", size = 2) +
@@ -111,8 +104,6 @@ ggplot() +
     title = "Vergleich von least squares & ridge estimator"
   )
 
-
-
 ## Plot für lasso und least squares estimator 
 
 data_2 <- data.frame(matrix(0, nrow = k, ncol = 2))
@@ -120,7 +111,6 @@ for (i in (1:k)){
   data_2[i,1] = 1/i
   data_2[i,2] = sqrt((sum(result_matrix[,2,i] - result_matrix[,3,i])^2))
 }
-View(data_2)
 
 ggplot() + 
   geom_point(aes(x = data_2$X1, y = data_2$X2), color = "red", size = 2) +
@@ -134,13 +124,11 @@ ggplot() +
 ## Average estimation error for lambda = 0.1
 
 beta_lambda01 = get_average_beta(M, 0.01)
-View(beta_lambda01)
 
 average_est_err = matrix(0, nrow = 3, ncol = 1)
 for (i in (1:3)){
   average_est_err[i,1] = sqrt(sum((beta - beta_lambda01[,i])^2))
 }
 View(average_est_err)
-
 
 
