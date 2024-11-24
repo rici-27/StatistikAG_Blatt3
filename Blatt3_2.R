@@ -10,7 +10,7 @@ rre <- function(X, y, lambda = 1){
   error <- function(w, X, y, lambda = 1){
     crossprod(y- X %*% w) - lambda * norm(w, type = "2")
   }
-  result = optim(rep(0,ncol(X)), error, X=X, y=y, lambda=lambda, method = 'BFGS')
+  result = optim(rep(0,ncol(X)), error, X=X, y=y, lambda=lambda)
   result$par
 }
 
@@ -19,7 +19,7 @@ ls<-function(X, y){
   lseq <- function(w, X, y) {
     crossprod(y - X%*%w)
   }
-  result=optim(rep(0, ncol(X)), lseq, X=X, y=y, method='BFGS')
+  result=optim(rep(0, ncol(X)), lseq, X=X, y=y)
   result$par
 }
 
@@ -37,6 +37,11 @@ y = X %*% beta + eps
 
 # get average beta Funktion
 get_average_beta <- function(M, lambda){
+  X <- matrix(rnorm(n*p, mean = 0, sd = 1), nrow = n, ncol = p)
+  X <- scale(X)
+  eps <- rnorm(n, mean=0, sd=0.25)
+  y = X %*% beta + eps
+  
   beta_rre_df <- data.frame(matrix(0, nrow = p, ncol = M))
   beta_lasso_df <- data.frame(matrix(0, nrow = p, ncol = M))
   beta_ls_df <- data.frame(matrix(0, nrow = p, ncol =M))
