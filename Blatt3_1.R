@@ -1,7 +1,6 @@
 #setwd("C:/Users/Anwender/Desktop/Statistik AG/Blatt3")
 #setwd("~/Desktop/Statistik_AG/Blatt3")
 
-print("test")
 
 library(tidyverse)
 library(glmnet)
@@ -10,7 +9,7 @@ library(glmnet)
 
 rre <- function(X, y, lambda = 1){
   error <- function(w, X, y, lambda = 1){
-    crossprod(y- X %*% w) - lambda * norm(w, type = "2")
+    crossprod(y- X %*% w) + lambda * norm(w, type = "2")
   }
   result = optim(rep(0,ncol(X)), error, X=X, y=y, lambda=lambda)
   result$par
@@ -40,7 +39,7 @@ X <- scale(X)
 # ich bau mir eine funktion die mir 3x3 matrix
 # mit durchschnitts beta für alle 3 varianten zurückliefert
 get_average_beta <- function(M, lambda){
-  eps <- rnorm(n, mean=0, sd=0.25)
+  eps <- rnorm(n, mean=0, sd=sqrt(0.25))
   y = X %*% beta + eps
   
   beta_rre_df <- data.frame(matrix(0, nrow = p, ncol = M))
@@ -51,6 +50,7 @@ get_average_beta <- function(M, lambda){
     beta_rre_df[,i] <- beta_rre
     
     lasso_1 <- glmnet(X, y, lambda = lambda, intercept = FALSE)
+    # intercept false -> [-1] entfernt 0
     beta_lasso <- as.vector(coef(lasso_1, s = lambda)[-1])
     beta_lasso_df[,i] <- beta_lasso
     
@@ -67,19 +67,20 @@ get_average_beta <- function(M, lambda){
   return(matrix)
 }
 
+?glmnet
+
 lambda_werte <- function(k){
   return (1/(1:k))
 }
 
 # Parameter auswählen
-k <- 20
+k <- 15
 M <- 1000
 
 lambda_values <- lambda_werte(k)
 
 # Leere 3D-Matrix initialisieren (3 x 3 x Anzahl lambda-Werte)
 result_matrix <- array(0, dim = c(3, 3, length(lambda_values)))
-
 # Schleife zum Füllen der 3D-Matrix
 for (i in (1:k)) {
   lambda <- lambda_values[i]
@@ -88,7 +89,12 @@ for (i in (1:k)) {
 }
 
 
+
 ## Plot für least squared und ridge estimator
+
+## unterschied zu daniel: meine lambda werden nicht so klein
+## kleinere unterschiede zwischen lambdas
+## bei sehr kleinen lambda sieht es aus wie bei lambda
 
 data_1 <- data.frame(matrix(0, nrow = k, ncol = 2))
 for (i in (1:k)){
@@ -122,6 +128,8 @@ ggplot() +
 
 
 ## Average estimation error for lambda = 0.1
+
+## hier sollte vll in jeder Iteration der Fehler berechnet werden
 
 beta_lambda01 = get_average_beta(M, 0.01)
 

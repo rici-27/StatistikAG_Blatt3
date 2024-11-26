@@ -57,38 +57,44 @@ get_average_beta <- function(M, lambda){
   beta_ls_mean <- apply(beta_ls_df, 1, mean)
   
   matrix <- array(c(as.matrix(beta_rre_mean), as.matrix(beta_lasso_mean), as.matrix(beta_ls_mean)), 
-                  dim = c(3, 3))
+                  dim = c(20, 3))
   
   return(matrix)
 }
 
 # Parameter auswählen
-M <- 10
+M <- 1000
 lambda_values <- c(0.1, 0.125, 0.15)
 
 # Leere 3D-Matrix initialisieren (3 x 3 x Anzahl lambda-Werte)
-result_matrix <- array(0, dim = c(3, 3, length(lambda_values)))
+result_matrix <- array(0, dim = c(20, 3, length(lambda_values)))
 
 # Schleife zum Füllen der 3D-Matrix
 for (i in seq_along(lambda_values)) {
   lambda <- lambda_values[i]
   result_matrix[,,i] <- get_average_beta(M, lambda)
+  print(i)
 }
 
+View(result_matrix[,,1])
 # Distance Matrix
+
+### daniel hat in jeder iteration die L0, L1, L2 berechnet
 
 distances <- array(0, dim = c(3, 3, 3))
 # der letzte Index steht für das Lambda, der erste für den estimator
 # der zweite steht für die Norm
 
-for (i in (0:3)){
-  for (j in (0:3)){
+for (i in (1:3)){
+  for (j in (1:3)){
     distances[i, 1, j] = sqrt(sum((result_matrix[,i,j]- beta)^2))
     distances[i, 2, j] = sum(abs(result_matrix[,i,j]- beta))
     distances[i, 3, j] = sum(result_matrix[,i,j] != beta)
   }
 }
 
+View(distances[,,j])
+beta
 
 ggplot() + 
   geom_point(aes(x = lambda_values, y = distances[1,1,], shape = "Ridge", color = "Ridge"), size = 4, show.legend = TRUE) +
